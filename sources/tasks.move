@@ -2,12 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 /// Game Object Example with Student Tasks
 /// This module demonstrates game item management with three student tasks
-module sui_intro_unit_two::game_item;
+module gameobject::tasks;
 
 use sui::event;
-use sui::transfer;
-use sui::object::{Self, UID, ID};
-use sui::tx_context::TxContext;
+use std::string::String;
+
 
 // Game item structure representing in-game assets
 public struct GameItem has key, store {
@@ -38,6 +37,22 @@ public struct GameItemRequestEvent has copy, drop {
     requester: address,
     intended_player: address,
 }
+
+public struct GameItemCreatedEvent has copy, drop {
+    item_id: ID,
+    item_type: String,
+    rarity: u8,
+    creator: address
+}
+
+
+public struct GameItemTransferredEvent has copy, drop {
+    item_id: ID,
+    from_address: address,
+    to_address: address
+}
+   
+
 
 // Error codes
 const ENotIntendedPlayer: u64 = 1;
@@ -124,6 +139,14 @@ public fun create_game_item(
     };
 
     // STUDENT CODE FOR EVENT EMISSION GOES HERE
+    event::emit(
+        GameItemCreatedEvent {
+            item_id : object::id(&game_item),
+            item_type,
+            rarity,
+            creator: ctx.sender()
+        }
+    );
 
     transfer::public_transfer(game_item, tx_context::sender(ctx))
 }
@@ -148,6 +171,18 @@ public fun transfer_game_item(
     ctx: &mut TxContext,
 ) {
     // STUDENT CODE GOES HERE
+    // assert!(game_item.);
+
+    event::emit(
+        GameItemTransferredEvent {
+            item_id : object::id(&game_item),
+            from_address : ctx.sender(),
+            to_address : recipient
+        }
+    );
+
+    transfer::transfer(game_item, recipient);
+
 }
 
 /* ---------- PROVIDED FUNCTIONS ---------- */

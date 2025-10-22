@@ -3,12 +3,10 @@
 /// A basic object example for Sui Move, part of the Sui Move intro course:
 /// https://github.com/sui-foundation/sui-move-intro-course
 /// Modified to use GameObject pattern
-module sui_intro_unit_two::game_item;
+module gameobject::gameobject;
 
 use sui::event;
-use sui::transfer;
-use sui::object::{Self, UID, ID};
-use sui::tx_context::TxContext;
+use std::string::String;
 
 public struct GameItem has key, store {
     id: UID,
