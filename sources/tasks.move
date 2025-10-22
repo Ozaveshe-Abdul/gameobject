@@ -88,7 +88,8 @@ public fun update_power(
     new_power: u64,
 ) {
     // STUDENT CODE GOES HERE
-    // game_item.power = new_power;  // Final line after validation
+    assert!(new_power >= 1 && new_power <= 100, EInvalidPower);
+    game_item.power = new_power;  // Final line after validation
 }
 
 /* ---------- STUDENT TASK 2 ---------- */
@@ -114,7 +115,7 @@ public fun create_game_item(
     ctx: &mut TxContext,
 ) {
     // STUDENT CODE FOR VALIDATION GOES HERE
-
+    assert!(rarity >= 1 && rarity <= 5, EInvalidPower);
     let game_item = GameItem {
         id: object::new(ctx),
         power,
