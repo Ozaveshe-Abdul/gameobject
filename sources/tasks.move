@@ -14,6 +14,7 @@ public struct GameItem has key, store {
     power: u64,
     rarity: u8,
     item_type: String,
+    owner: address
 }
 
 // Inventory structure to wrap game items
@@ -57,6 +58,13 @@ public struct GameItemTransferredEvent has copy, drop {
 // Error codes
 const ENotIntendedPlayer: u64 = 1;
 const EInvalidPower: u64 = 2;  // New error code for Task 1
+
+#[error]
+const ENotOwner: vector<u8> = b"Not object owner";
+
+#[error]
+const EInvalidRarity: vector<u8> = b"rarity out of range";
+
 
 /// Module initializer - creates the first admin cap
 fun init(ctx: &mut TxContext) {
@@ -130,12 +138,13 @@ public fun create_game_item(
     ctx: &mut TxContext,
 ) {
     // STUDENT CODE FOR VALIDATION GOES HERE
-    assert!(rarity >= 1 && rarity <= 5, EInvalidPower);
+    assert!(rarity >= 1 && rarity <= 5, EInvalidRarity);
     let game_item = GameItem {
         id: object::new(ctx),
         power,
         rarity,
         item_type,
+        owner: ctx.sender()
     };
 
     // STUDENT CODE FOR EVENT EMISSION GOES HERE
@@ -171,7 +180,7 @@ public fun transfer_game_item(
     ctx: &mut TxContext,
 ) {
     // STUDENT CODE GOES HERE
-    // assert!(game_item.);
+    assert!(game_item.owner == ctx.sender(), ENotOwner);
 
     event::emit(
         GameItemTransferredEvent {
